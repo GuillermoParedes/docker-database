@@ -1,0 +1,39 @@
+version: "3.5"
+
+x-common-variables: &common-variables
+  MYSQL_DATABASE: tutator
+  FRONT_APP_SERVER_PORT: 4200
+  API_APP_SERVER_PORT: 3555
+
+services:
+  db:
+    image: mariadb:10.3
+    # command: mysqld --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+    volumes:
+      - ./database:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: sample
+      MYSQL_DATABASE: tutator
+      MYSQL_USER: tutator
+      MYSQL_PASSWORD: sample
+      # TZ: "America/La_Paz"
+    ports:
+      - 3306:3306
+    networks:
+      - tutator-networks-app
+  phpmyadmin:
+    # depends_on:
+    #   - db
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      UPLOAD_LIMIT: 300M
+    networks:
+      - tutator-networks-app
+#Docker Networks
+networks:
+  tutator-networks-app:
+    driver: bridge
